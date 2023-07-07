@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+varying vec4 fColor;
+varying vec4 fPosition;
+
+uniform vec4 ka;
+uniform vec4 kd;
+uniform vec4 ks;
+uniform vec4 Li;
+
+uniform float alpha;
+uniform float Le;
+
+uniform vec4 lightPosition;
+uniform mat4 projection;
+uniform mat4 modelView;
+
+void main(){
+  vec3 pos = (modelView * vPosition).xyz;
+  vec3 light = (modelView * lightPosition).xyz;
+  vec3 n = normalize( (modelView*vNormal).xyz);
+
+  vec3 wi = lightPosition.w == 0.0 ? normalize(light):normalize(light-pos);
+  vec3 wo = normalize(-pos);
+  vec3 wr = normalize(2.0 * dot(wi,n) * n - wi);
+  vec3 wh = normalize(wi + wo);
+
+  vec4 La = ka * Li * Le;
+  vec4 Ls = ks * Li * Le * pow(max( dot(wh, n), 0.0 ), alpha);
+  vec4 Lo = kd * Li * Le * max( dot(wi, n), 0.0 ) + La + Ls;
+
+  if( dot(wi, n) < 0.0 ) Ls = vec4(0.0, 0.0, 0.0, 1.0);
+
+  gl_Position = projection * modelView * vPosition;
+
+  fColor = Lo;
+  fPosition = vPosition;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+  precision mediump float;
+  varying vec4 fColor;
+  varying vec4 fPosition;
+  void main(){
+    gl_FragColor = 0.5 * fPosition + 0.5 * fColor;
+  }
+</script>
+<script type="text/javascript" src="../common/webgl-utils.js"></script>
+<script type="text/javascript" src="../common/MV.js"></script>
+<script type="text/javascript" src="../common/initShaders.js"></script>
+<script type="text/javascript" src="w4p4.js"></script>
+<html lang="en" dir="ltr">
+
+<body>
+  <canvas id="gl-Canvas" width="512" height="512"> </canvas>
+  <div>
+    <button id="increaseBtn"> + </button>
+    <button id="decreaseBtn"> - </button>
+    <button id="orbit"> Start / Stop</button>
+
+    <br>K<sub>a</sub><br>
+    <input id="slider_ka" type="range" min="0" max="1" value="0.5" step="0.1" />
+
+    <br>K<sub>d</sub><br>
+    <input id="slider_kd" type="range" min="0" max="1" value="0.5" step="0.01" />
+
+    <br>K<sub>s</sub><br>
+    <input id="slider_ks" type="range" min="0" max="1" value="0.03" step="0.01" />
+    <br>α<br>
+    <input id="slider_alpha" type="range" min="0" max="200" value="100" step="5" />
+
+    <br>L<sub>e</sub><br>
+    <input id="slider_le" type="range" min="0" max="2" value="0.5" step="0.05" />
+
+</body>
+
+</html>

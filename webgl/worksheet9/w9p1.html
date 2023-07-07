@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<script type="text/javascript" src="../common/webgl-utils.js"></script>
+<script type="text/javascript" src="../common/webgl-debug.js"></script>
+<script type="text/javascript" src="../common/initShaders.js"></script>
+<script type="text/javascript" src="../common/MV.js"></script>
+<script type="text/javascript" src="../common/OBJParser.js"></script>
+<script type="text/javascript" src="w9p1.js"></script>
+
+<script id="vertex-shader-teapot" type="x-shader/x-vertex">
+      attribute vec3 vertex_position;
+      attribute vec3 vertex_normal;
+      attribute vec4 vertex_color;
+      
+      uniform mat4 modelView;
+      uniform mat4 perspectiveMatrix;
+
+      varying vec4 fColor;
+
+      void main() {
+          fColor = vertex_color;
+          
+          vec4 cameraPos = modelView * vec4(vertex_position, 1);
+          gl_Position = perspectiveMatrix * cameraPos;
+      }
+  </script>
+<script id="fragment-shader-teapot" type="x-shader/x-fragment">
+      precision highp float;
+      
+      varying vec4 fColor;
+      uniform bool visible;
+
+      void main() {
+          if (visible) {
+              gl_FragColor = fColor;
+          } else {
+              gl_FragColor = vec4(0, 0, 0, 1);
+          }
+      }
+  </script>
+<script id="vertex-shader-ground" type="x-shader/x-vertex">
+    attribute vec3 vertex_position;
+    attribute vec2 texPosition;
+    uniform mat4 modelView;
+    uniform mat4 perspective;
+    varying vec2 fTexCoord;
+    void main() {
+        fTexCoord = texPosition;
+        gl_Position = perspective * modelView * vec4(vertex_position, 1);
+    }
+</script>
+
+<script id="fragment-shader-ground" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec2 fTexCoord;
+    uniform sampler2D texture;
+    void main() {
+        gl_FragColor = texture2D(texture, fTexCoord);
+    }
+</script>
+
+<body>
+    <canvas id="c" height="512" width="512"></canvas>
+  <div>
+    <div>Move <input id="moveTeapot" type="checkbox" checked /></div>
+    <div>Look down <input id="lookDown" type="checkbox" /></div>
+    <div>Light <input id="moveLight" type="checkbox" checked /></div>
+  </div>
+</body>
+
+</html>

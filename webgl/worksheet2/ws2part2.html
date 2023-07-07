@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="../common/webgl-utils.js"></script>
+<script type="text/javascript" src="../common/initShaders.js"></script>
+<script type="text/javascript" src="../common/MV.js"></script>
+<script type="text/javascript" src="w2part2.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+    varying vec4 fColor;
+    void main()
+    {
+        gl_Position = vPosition;
+        fColor = vColor;
+        gl_PointSize = 20.0;
+    }
+    </script>
+    
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    
+    precision mediump float;
+    varying vec4 fColor;
+    void main()
+    {
+        gl_FragColor = fColor;
+    }
+    </script>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>w2p2</title>
+</head>
+
+<body>
+    <div>
+        <canvas id="gl-canvas" width="512" height="512">
+        </canvas>
+    </div>
+    <div>
+        <select id="mymenu" size="7">
+            <option value="0">Black</option>
+            <option value="1">Red</option>
+            <option value="2">Yellow</option>
+            <option value="3">Green</option>
+            <option value="4">Blue</option>
+            <option value="5">Magenta</option>
+            <option value="6">Cyan</option>
+        </select>
+
+    </div>
+    <button onClick="document.location.reload()">clear</button>
+
+</body>
+
+</html>
